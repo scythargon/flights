@@ -1,0 +1,1 @@
+{"data": {"map_v2": {"origin_city": {"iata": "NAV"}, "prices": [{"price": {"value": 2767}, "destination_city": {"iata": "IST", "country": {"iata": "TR"}, "coordinates": {"lat": 40.976665, "lon": 28.815277}}, "travel_restrictions": null}]}}}

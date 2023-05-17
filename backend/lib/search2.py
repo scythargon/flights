@@ -1,5 +1,7 @@
 import requests
 
+from utils import log_call, get_city_name
+
 HEADERS = {
     'authority': 'ariadne.aviasales.ru',
     'accept': '*/*',
@@ -45,6 +47,7 @@ def cache(cache_dir):
 
 @lru_cache(maxsize=None)
 @cache(cache_dir=os.path.join(os.path.dirname(__file__), "map_cache"))
+@log_call
 def get_map_data(city, month):
     query = """
         query GetMapV2(
@@ -110,6 +113,8 @@ def get_map_data(city, month):
         "operation_name": "map_v2"
     }
 
+    aiport_city = get_city_name(city)
+    print(aiport_city)
     response = requests.post(url, headers=HEADERS, json=data)
     return response.json()
 

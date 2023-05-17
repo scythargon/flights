@@ -1,0 +1,1 @@
+{"data": {"map_v2": {"origin_city": {"iata": "SJW"}, "prices": [{"price": {"value": 8091}, "destination_city": {"iata": "SHA", "country": {"iata": "CN"}, "coordinates": {"lat": 31.230393, "lon": 121.473704}}, "travel_restrictions": null}]}}}

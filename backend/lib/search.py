@@ -1,7 +1,8 @@
 import logging
-import json
-import math
+
 import requests
+
+from utils import calculate_distance, get_city_name
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
 
@@ -119,6 +120,37 @@ def direct_flights_request(origin, destination):
     return resp
 
 
+from termcolor import colored
+from search2 import get_map_data
+
+
+def print_route_prices(route, max_price=None):
+    total_price = 0
+    if max_price is not None:
+        for i in range(len(route) - 1):
+            origin, destination = route[i], route[i + 1]
+            response = get_map_data(origin, "2023-05-01")
+            prices = response['data']['map_v2']['prices']
+            for price_data in prices:
+                if price_data['destination_city']['iata'] == destination:
+                    price = price_data['price']['value']
+                    total_price += price
+        if total_price > max_price:
+            return
+
+    print(colored("Маршрут найден:", "green", attrs=["bold"]), " -> ".join(route))
+    for i in range(len(route) - 1):
+        origin, destination = route[i], route[i + 1]
+        response = get_map_data(origin, "2023-05-01")
+        prices = response['data']['map_v2']['prices']
+        for price_data in prices:
+            if price_data['destination_city']['iata'] == destination:
+                price = price_data['price']['value']
+                print(f"{origin} ({get_city_name(origin)}) -> {destination} ({get_city_name(destination)}): {price}")
+
+    print("Total price:", total_price)
+
+
 airports = {
     'DPS': (-8.7482, 115.1672),  # Bali
     'JKT': (-6.1306, 106.7669),  # Jakarta
@@ -136,62 +168,61 @@ airports = {
     'NQZ': (51.1703, 71.4493),  # Nur-Sultan (Astana)
 }
 
-from pprint import pprint
-from termcolor import colored
-from search2 import get_map_data
+try:
+    with open('airport_coordinates.json', 'r') as f:
+        airports = json.load(f)
+except FileNotFoundError:
+   pass
+
+month = "2023-05-01"
 
 
-def print_route_prices(route):
-    total_price = 0
-    print(colored("Маршрут найден:", "green", attrs=["bold"]), " -> ".join(route))
-    for i in range(len(route)-1):
-        origin, destination = route[i], route[i+1]
-        response = get_map_data(origin, "2023-05-01")
-        prices = response['data']['map_v2']['prices']
-        for price_data in prices:
-            if price_data['destination_city']['iata'] == destination:
-                price = price_data['price']['value']
-                total_price += price
-                print(f"{origin} -> {destination}: {price}")
-    print("Total price:", total_price)
-
-
-def find_route(origin, destination, route=None):
+def find_route(origin, destination, route=None, first_airport=None, last_airport=None):
     if route is None:
         route = []
     route.append(origin)
-    if len(route) == 5:
+    if len(route) == 4:
         return
     prefix = ' ' * (len(route) - 1)
     if origin == destination:
-        print_route_prices(route)
+        print_route_prices(route, 70000)
         return
 
-    for next_airport in airports:
-        # print(prefix, f'check if {next_airport} in {route}')
+    if first_airport is None:
+        first_airport = origin
+    if last_airport is None:
+        last_airport = destination
+
+    map_data = get_map_data(origin, month)  # Получаем данные о прямых перелетах из текущего аэропорта
+    prices = map_data['data']['map_v2']['prices']
+    lat1, lon1 = airports[origin]
+
+    if route == ['DPS', 'JKT', 'TAS', 'OVB']:
+        print(route)
+
+    for price_info in prices:
+        next_airport = price_info['destination_city']['iata']
         if next_airport not in route:
-            lat1, lon1 = airports[origin]
-            lat2, lon2 = airports[next_airport]
-            # print(prefix, next_airport, lat2, lat1)
-            if lat2 > lat1:
-                # print(prefix, 'bigger')
-                # print(prefix, 'checking route', route, next_airport, end=': ', flush=True)
-                direct_flights = direct_flights_request(origin, next_airport)
-#                 # pprint(direct_flights)
-                found = False
-                for flight in direct_flights["there"]["schedule"]:
-                    if flight["flights"]:
-                        found = True
-                if found:
-                    # print('found')
-                    find_route(next_airport, destination, route.copy())
-                else:
-                    pass
-                    # print('not found')
+            lat2, lon2 = price_info['destination_city']['coordinates']['lat'], price_info['destination_city']['coordinates']['lon']
+            # if lat2 > lat1 and lat2 > airports[first_airport][0] and lat2 <= airports[last_airport][0]:
+            distance_current = calculate_distance(lat1, lon1, airports[last_airport][0], airports[last_airport][1])
+            distance_next = calculate_distance(lat2, lon2, airports[last_airport][0], airports[last_airport][1])
+            if distance_next <= distance_current:
+                aiport_city = get_city_name(next_airport)
+                current_city = get_city_name(origin)
+                # print(f'from {current_city  } checking', aiport_city, int(distance_next), int(distance_current))
+                airports[next_airport] = (lat2, lon2)  # Добавляем координаты нового аэропорта в словарь airports
+                found = True
+                find_route(next_airport, destination, route.copy(), origin, destination)
 
     route.pop()
 
 
 
-find_route('DPS', 'OVB')
+
+find_route('OVB', 'AER')
+
+with open('airport_coordinates.json', 'w') as f:
+    json.dump(airports, f)
+
 # print(direct_flights_request('TAS', 'OVB'))

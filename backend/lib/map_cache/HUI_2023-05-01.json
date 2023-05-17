@@ -1,0 +1,1 @@
+{"data": {"map_v2": {"origin_city": {"iata": "HUI"}, "prices": [{"price": {"value": 2895.83}, "destination_city": {"iata": "HAN", "country": {"iata": "VN"}, "coordinates": {"lat": 21.214184, "lon": 105.802826}}, "travel_restrictions": null}]}}}
