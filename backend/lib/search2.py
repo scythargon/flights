@@ -1,6 +1,6 @@
 import requests
 
-from utils import log_call, get_city_name
+from .utils import log_call, get_city_name
 
 HEADERS = {
     'authority': 'ariadne.aviasales.ru',
@@ -117,5 +117,3 @@ def get_map_data(city, month):
     print(aiport_city)
     response = requests.post(url, headers=HEADERS, json=data)
     return response.json()
-
-# print(get_map_data('OVB', '2023-05-01'))

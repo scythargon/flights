@@ -30,8 +30,10 @@ export const customMarkerUserPos = new L.Icon({
 
 const MyMap = () => {
   const [markers, setMarkers] = useState([
-    {lat: -8.4095184, lng: 115.188916, code: 'DPS', loaded: false, linesEnabled: false, visible: true},
-    {lat: 55.033, lng: 82.933, code: 'OVB', loaded: false, linesEnabled: false, visible: true}
+    // {lat: -8.4095184, lng: 115.188916, code: 'DPS', loaded: false, linesEnabled: false, visible: true},
+    {lat: 55.033, lng: 82.933, code: 'OVB', loaded: false, linesEnabled: false, visible: true},
+    {lat: 27.2579, lng: 33.8116, code: 'HRG', loaded: false, linesEnabled: false, visible: true},
+    // {code: "TCI", "lat": 28.2915637, "lng": -16.6291304, loaded: false, linesEnabled: false, visible: true}
   ]);
 
   const [lines, setLines] = useState([]);

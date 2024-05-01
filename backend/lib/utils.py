@@ -1,4 +1,6 @@
 import functools
+import json
+from datetime import datetime
 
 
 def log_call(func):
@@ -32,12 +34,24 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     distance = EARTH_RADIUS * c
     return distance
 
-import json
 
 def get_city_name(iata):
-    with open('airports.json', 'r') as file:
+    with open('lib/airports.json', 'r') as file:
         data = json.load(file)
         if iata in data:
             return data[iata]
         else:
             return None
+
+
+def get_first_day_of_next_month():
+    today = datetime.now()
+    if today.month == 12:
+        next_month = 1
+        next_year = today.year + 1
+    else:
+        next_month = today.month + 1
+        next_year = today.year
+
+    first_day_of_next_month = datetime(next_year, next_month, 1)
+    return first_day_of_next_month.strftime('%Y-%m-%d')

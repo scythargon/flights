@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from utils import calculate_distance, get_city_name
+from .utils import calculate_distance, get_city_name, get_first_day_of_next_month
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
 
@@ -123,13 +123,14 @@ def direct_flights_request(origin, destination):
 from termcolor import colored
 from search2 import get_map_data
 
+date = get_first_day_of_next_month()
 
 def print_route_prices(route, max_price=None):
     total_price = 0
     if max_price is not None:
         for i in range(len(route) - 1):
             origin, destination = route[i], route[i + 1]
-            response = get_map_data(origin, "2023-05-01")
+            response = get_map_data(origin, date)
             prices = response['data']['map_v2']['prices']
             for price_data in prices:
                 if price_data['destination_city']['iata'] == destination:
@@ -141,7 +142,7 @@ def print_route_prices(route, max_price=None):
     print(colored("Маршрут найден:", "green", attrs=["bold"]), " -> ".join(route))
     for i in range(len(route) - 1):
         origin, destination = route[i], route[i + 1]
-        response = get_map_data(origin, "2023-05-01")
+        response = get_map_data(origin, date)
         prices = response['data']['map_v2']['prices']
         for price_data in prices:
             if price_data['destination_city']['iata'] == destination:
@@ -174,7 +175,7 @@ try:
 except FileNotFoundError:
    pass
 
-month = "2023-05-01"
+month = get_first_day_of_next_month()
 
 
 def find_route(origin, destination, route=None, first_airport=None, last_airport=None):

@@ -1,0 +1,1 @@
+{"errors": [{"message": "Unknown type \"MapV2Input\".", "locations": [{"line": 3, "column": 13}], "extensions": {"code": "GRAPHQL_VALIDATION_FAILED"}}, {"message": "Cannot query field \"map_v2\" on type \"Query\".", "locations": [{"line": 6, "column": 13}], "extensions": {"code": "GRAPHQL_VALIDATION_FAILED"}}], "data": null}
