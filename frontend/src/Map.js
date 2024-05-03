@@ -58,10 +58,10 @@ const MyMap = () => {
         .then(response => response.json())
         .then(data => {
           const knownCities = markers.map(m => m.code);
-          const newMarkers = data.filter(price => !knownCities.includes(price.destination_city.iata)).map(price => ({
-            lat: price.destination_city.coordinates.lat,
-            lng: price.destination_city.coordinates.lon,
-            code: price.destination_city.iata,
+          const newMarkers = data.filter(price => !knownCities.includes(price.iata)).map(price => ({
+            lat: price.lat,
+            lng: price.lng,
+            code: price.iata,
             loaded: false,
             linesEnabled: false,
             visible: true
@@ -69,12 +69,12 @@ const MyMap = () => {
 
           const newLines = data.map(price => ({
             source: marker.code,
-            dest: price.destination_city.iata,
+            dest: price.iata,
             enabled: true,
             selected: false,
             leg: [
               [marker.lat, marker.lng],
-              [price.destination_city.coordinates.lat, price.destination_city.coordinates.lon]
+              [price.lat, price.lng]
             ]
           }));
           let changedMarkers = alter('code', marker.code, 'loaded', true)(
