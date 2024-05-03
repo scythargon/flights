@@ -1,3 +1,9 @@
+## Draft: flight search engine
+
+![map demo](readme/map_demo.png)
+
+![script demo](readme/script_demo.png)
+
 Backend works on Python 3.10.12 for sure.
 
 Use `pip install -r requirements.txt` to install all required packages.
