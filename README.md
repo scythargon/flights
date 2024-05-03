@@ -19,3 +19,5 @@ Frontend works on NodeJS 16.13.1 for sure.
 Then go to http://localhost:3000 in your browser.
 
 ### See [TODO.md](TODO.md) for what to do.
+
+Tests can be run with `pytest`.
